@@ -92,8 +92,8 @@ public class VideoGameProject_AntxonMoço extends Application {
         //Configuracion de los aliens
 
         imagenAlien = new ImageView(rutaImagenes.getAlien());
-        imagenAlien.setFitWidth(100);
-        imagenAlien.setFitHeight(100);
+        imagenAlien.setFitWidth(200);
+        imagenAlien.setFitHeight(200);
         posicionAleatoriaAlien();
         
         
@@ -130,10 +130,15 @@ public class VideoGameProject_AntxonMoço extends Application {
             stats.setScore(10);
             scoreLabel.setText("SCORE: " + stats.getScore());
             
+            imagenAlien.setUserData("clicked");
+            
             //Configuración del nivel 2
             if(stats.getScore() >= 50 && !activarnivel2){
                 activarnivel2 = true;
                 imageView.setImage(rutaImagenes.getBackground2());
+                //Aumentamos dificultado haciendo mas pequeños los aliens
+                imagenAlien.setFitWidth(130);
+                imagenAlien.setFitHeight(130);
                 stats.incrementarLevel();
                 nivelLabel.setText("LEVEL: " + stats.getLevel());
                 
@@ -143,6 +148,7 @@ public class VideoGameProject_AntxonMoço extends Application {
             posicionAleatoriaAlien();
             timeline.playFromStart(); // Reinicia el temporizador cuando le das click
             event.consume();
+            imagenAlien.setImage(rutaImagenes.getAlien());
         });
         
         //Evento del click, en caso de que falles
@@ -187,8 +193,8 @@ public class VideoGameProject_AntxonMoço extends Application {
     private void posicionAleatoriaAlien() {
         double maxX = 600 - imagenAlien.getFitWidth();
         double maxY = 500 - imagenAlien.getFitHeight();
-        double x = Math.random() * maxX;
-        double y = Math.random() * maxY;
+        double x = Math.random() * (maxX - 20) + 10;
+        double y = Math.random() * (maxY - 20) + 10;
         imagenAlien.setX(x);
         imagenAlien.setY(y);
     }
@@ -211,26 +217,23 @@ public class VideoGameProject_AntxonMoço extends Application {
     private void configurarMovimientoNivel2() {
         double maxX = 600 - imagenAlien.getFitWidth();
         double maxY = 500 - imagenAlien.getFitHeight();
-        double x = Math.random() * maxX;
-        double y = Math.random() * maxY;
+        double x = Math.random() * (maxX - 20) + 10;
+        double y = Math.random() * (maxY - 20) + 10;
         
-        TranslateTransition movimientoAlien = new TranslateTransition(Duration.seconds(5), imagenAlien);
+        TranslateTransition movimientoAlien = new TranslateTransition(Duration.seconds(3), imagenAlien);
         movimientoAlien.setFromX(imagenAlien.getX());
         movimientoAlien.setFromY(imagenAlien.getY());
         movimientoAlien.setToX(x);
         movimientoAlien.setToY(y);
         movimientoAlien.setCycleCount(1);
+        
+        
         movimientoAlien.setOnFinished(e -> {
             //Cuando acaba el movimiento, cambia de posicion y pierdes puntos
-            stats.restarScore(30); 
-            if (stats.getScore() < 0) {
-                stats.perderVida();
-                stats.resetScore();
-                actualizarVidas(vida1, vida2, vida3);
-            }
             posicionAleatoriaAlien();
             configurarMovimientoNivel2();
         });
+        
         movimientoAlien.play();
     }
     

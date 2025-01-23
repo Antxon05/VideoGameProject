@@ -13,7 +13,7 @@ public class Stats {
     private int score = 0;
     private int lifes = 3;
     private int contadorAciertos = 0;
-    private int level = 0;
+    private int level = 1;
 
     public int getScore() {
         return score;
@@ -34,7 +34,7 @@ public class Stats {
     public int getLifes() {
         return lifes;
     }
-
+    
     
     public void perderVida(){
         this.lifes--;
@@ -51,6 +51,11 @@ public class Stats {
     
     public void incrementarLevel(){
         this.level++;
+    }
+    
+    
+    public int getLevel() {
+        return level;
     }
     
     

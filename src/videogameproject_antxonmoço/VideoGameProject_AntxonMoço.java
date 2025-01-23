@@ -34,6 +34,12 @@ public class VideoGameProject_AntxonMoço extends Application {
     private ImageView imagenAlien = new ImageView();
     private RutaImagenes rutaImagenes = new RutaImagenes();
     private Stats stats = new Stats();
+    private ImageView vida1 = new ImageView(rutaImagenes.getVidaLlena());
+    private ImageView vida2 = new ImageView(rutaImagenes.getVidaLlena());
+    private ImageView vida3 = new ImageView(rutaImagenes.getVidaLlena());
+    private boolean activarnivel2;
+    private boolean activarnivel3;
+    
     
     @Override
     public void start(Stage primaryStage) {
@@ -52,9 +58,6 @@ public class VideoGameProject_AntxonMoço extends Application {
         
         //Configuración de la vida inicial, puntuación y niveles
         
-        ImageView vida1 = new ImageView(rutaImagenes.getVidaLlena());
-        ImageView vida2 = new ImageView(rutaImagenes.getVidaLlena());
-        ImageView vida3 = new ImageView(rutaImagenes.getVidaLlena());
         vida1.setFitWidth(50);
         vida1.setFitHeight(50);
         vida1.setTranslateX(10);
@@ -71,13 +74,20 @@ public class VideoGameProject_AntxonMoço extends Application {
         vida3.setTranslateY(10);
 
         
-        //Score
+        //Configuración del Score
         Label scoreLabel = new Label("SCORE: " + stats.getScore());
         Font customFont = Font.loadFont(("file:src\\Images\\customFont.ttf"),17);
         scoreLabel.setTranslateX(500);
         scoreLabel.setTranslateY(20);
         scoreLabel.setFont(customFont);
         scoreLabel.setStyle("-fx-text-fill: white;");
+        
+        //Connfiguración del Level
+        Label nivelLabel = new Label("LEVEL: " + stats.getLevel());
+        nivelLabel.setTranslateX(270);
+        nivelLabel.setTranslateY(20);
+        nivelLabel.setFont(customFont);
+        nivelLabel.setStyle("-fx-text-fill: white;");
         
         //Configuracion de los aliens
 
@@ -87,24 +97,17 @@ public class VideoGameProject_AntxonMoço extends Application {
         posicionAleatoriaAlien();
         
         
-        //Configuración de las animaciones para los aliens
-        
-        TranslateTransition translate = new TranslateTransition();
-        translate.setDuration(Duration.millis(1000));
-        translate.setAutoReverse(true);
-        translate.setNode(imagenAlien);
-        //translate.play();
-        
+        //Animación del contador de 3 segundos
         
         javafx.animation.Timeline timeline = new javafx.animation.Timeline(
             new javafx.animation.KeyFrame(
-                Duration.seconds(3), //El alien estara visible por 3 segundos
+                Duration.seconds(3), //El alien se muestra durante 3 segundos
                 e -> {
-                    // Si no se hace clic, se resta puntaje
-                    stats.restarScore(10);
+                    // Si no se hace clic, se resta el puntuaje
+                    stats.restarScore(30);
                     scoreLabel.setText("SCORE: " + stats.getScore());
 
-                    // Verificar si el puntaje es menor a 0
+                    // Verificar si el puntuaje es menor a 0
                     if (stats.getScore() < 0) {
                         stats.perderVida();
                         stats.resetScore();
@@ -126,6 +129,17 @@ public class VideoGameProject_AntxonMoço extends Application {
             stats.incrementarAciertos();
             stats.setScore(10);
             scoreLabel.setText("SCORE: " + stats.getScore());
+            
+            //Configuración del nivel 2
+            if(stats.getScore() >= 50 && !activarnivel2){
+                activarnivel2 = true;
+                imageView.setImage(rutaImagenes.getBackground2());
+                stats.incrementarLevel();
+                nivelLabel.setText("LEVEL: " + stats.getLevel());
+                
+                configurarMovimientoNivel2();
+            }
+            
             posicionAleatoriaAlien();
             timeline.playFromStart(); // Reinicia el temporizador cuando le das click
             event.consume();
@@ -148,14 +162,13 @@ public class VideoGameProject_AntxonMoço extends Application {
         });
         
         
-        
-        
         root.getChildren().add(imageView);
         root.getChildren().add(imagenAlien);
         root.getChildren().add(scoreLabel);
         root.getChildren().add(vida1);
         root.getChildren().add(vida2);
         root.getChildren().add(vida3);
+        root.getChildren().add(nivelLabel);
         
         primaryStage.setTitle("KILL THE ALIEN");
         primaryStage.setScene(scene);
@@ -192,6 +205,33 @@ public class VideoGameProject_AntxonMoço extends Application {
             System.exit(0);
         }
         
+    }
+    
+    //Metodo para configurar el movimiento del nivel 2
+    private void configurarMovimientoNivel2() {
+        double maxX = 600 - imagenAlien.getFitWidth();
+        double maxY = 500 - imagenAlien.getFitHeight();
+        double x = Math.random() * maxX;
+        double y = Math.random() * maxY;
+        
+        TranslateTransition movimientoAlien = new TranslateTransition(Duration.seconds(5), imagenAlien);
+        movimientoAlien.setFromX(imagenAlien.getX());
+        movimientoAlien.setFromY(imagenAlien.getY());
+        movimientoAlien.setToX(x);
+        movimientoAlien.setToY(y);
+        movimientoAlien.setCycleCount(1);
+        movimientoAlien.setOnFinished(e -> {
+            //Cuando acaba el movimiento, cambia de posicion y pierdes puntos
+            stats.restarScore(30); 
+            if (stats.getScore() < 0) {
+                stats.perderVida();
+                stats.resetScore();
+                actualizarVidas(vida1, vida2, vida3);
+            }
+            posicionAleatoriaAlien();
+            configurarMovimientoNivel2();
+        });
+        movimientoAlien.play();
     }
     
 }

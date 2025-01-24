@@ -19,12 +19,12 @@ public class Stats {
         return score;
     }
 
-    public void setScore(int score) {
-        this.score += score;
+    public void setScore() {
+        this.score += 10;
     }
     
-    public void restarScore(int score){
-        this.score -= score;
+    public void restarScore(){
+        this.score -= 30;
     }
     
     public void resetScore(){

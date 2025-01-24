@@ -20,9 +20,12 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 /**
  *
@@ -34,17 +37,28 @@ public class VideoGameProject_AntxonMoço extends Application {
     private ImageView imagenAlien = new ImageView();
     private RutaImagenes rutaImagenes = new RutaImagenes();
     private Stats stats = new Stats();
+    
     private ImageView vida1 = new ImageView(rutaImagenes.getVidaLlena());
     private ImageView vida2 = new ImageView(rutaImagenes.getVidaLlena());
     private ImageView vida3 = new ImageView(rutaImagenes.getVidaLlena());
+    
+    private Font defaultFont = Font.loadFont(("file:src\\Images\\customFont.ttf"),20);
+    private Font winFont = Font.loadFont(("file:src\\Images\\customFont.ttf"),50);
+    
     private boolean activarnivel2;
     private boolean activarnivel3;
+    private int margenReaparicion = 500;
+            
+    private TranslateTransition movimientoAlien = new TranslateTransition();
+    private Scene scene;
     
     
     @Override
     public void start(Stage primaryStage) {
         Group root = new Group(); 
-        Scene scene = new Scene(root, 700, 600);
+        scene = new Scene(root, 900, 800);
+        
+
         
         //Configuración del fondo de pantalla, se va adaptando segun agrandemos el scene
         ColorAdjust colorAdjust = new ColorAdjust();
@@ -60,33 +74,33 @@ public class VideoGameProject_AntxonMoço extends Application {
         
         vida1.setFitWidth(50);
         vida1.setFitHeight(50);
-        vida1.setTranslateX(10);
+        vida1.setTranslateX(30);
         vida1.setTranslateY(10);
         
         vida2.setFitWidth(50);
         vida2.setFitHeight(50);
-        vida2.setTranslateX(60);
+        vida2.setTranslateX(80);
         vida2.setTranslateY(10);
         
         vida3.setFitWidth(50);
         vida3.setFitHeight(50);
-        vida3.setTranslateX(110);
+        vida3.setTranslateX(130);
         vida3.setTranslateY(10);
 
         
         //Configuración del Score
         Label scoreLabel = new Label("SCORE: " + stats.getScore());
-        Font customFont = Font.loadFont(("file:src\\Images\\customFont.ttf"),17);
-        scoreLabel.setTranslateX(500);
+        
+        scoreLabel.setTranslateX(650);
         scoreLabel.setTranslateY(20);
-        scoreLabel.setFont(customFont);
+        scoreLabel.setFont(defaultFont);
         scoreLabel.setStyle("-fx-text-fill: white;");
         
         //Connfiguración del Level
         Label nivelLabel = new Label("LEVEL: " + stats.getLevel());
-        nivelLabel.setTranslateX(270);
+        nivelLabel.setTranslateX(350);
         nivelLabel.setTranslateY(20);
-        nivelLabel.setFont(customFont);
+        nivelLabel.setFont(defaultFont);
         nivelLabel.setStyle("-fx-text-fill: white;");
         
         //Configuracion de los aliens
@@ -104,7 +118,7 @@ public class VideoGameProject_AntxonMoço extends Application {
                 Duration.seconds(3), //El alien se muestra durante 3 segundos
                 e -> {
                     // Si no se hace clic, se resta el puntuaje
-                    stats.restarScore(30);
+                    stats.restarScore();
                     scoreLabel.setText("SCORE: " + stats.getScore());
 
                     // Verificar si el puntuaje es menor a 0
@@ -127,7 +141,7 @@ public class VideoGameProject_AntxonMoço extends Application {
         
         imagenAlien.setOnMouseClicked(event -> {
             stats.incrementarAciertos();
-            stats.setScore(10);
+            stats.setScore();
             scoreLabel.setText("SCORE: " + stats.getScore());
             
             imagenAlien.setUserData("clicked");
@@ -141,8 +155,34 @@ public class VideoGameProject_AntxonMoço extends Application {
                 imagenAlien.setFitHeight(130);
                 stats.incrementarLevel();
                 nivelLabel.setText("LEVEL: " + stats.getLevel());
-                
+            }
+            
+            //Configuración del nivel 3
+            if(stats.getScore() >= 100 && !activarnivel3){
+                activarnivel3 = true;
+                imageView.setImage(rutaImagenes.getBackground3());
+                imagenAlien.setFitWidth(130);
+                imagenAlien.setFitHeight(130);
+                stats.incrementarLevel();
+                nivelLabel.setText("LEVEL: " + stats.getLevel());
+            }
+            
+            
+            //Si llega  150 nos lleva a la pantalla de victoria
+            if(stats.getScore() >= 150){
+                mostrarPantallaVictoria(primaryStage);
+                return;
+            }
+            
+            
+            
+            //Cuando se active los niveles 2 o 3 comenzaran los movimientos.
+            if(activarnivel2){
                 configurarMovimientoNivel2();
+            }
+            
+            if(activarnivel3){
+                configurarMovimientoNivel3();
             }
             
             posicionAleatoriaAlien();
@@ -154,7 +194,7 @@ public class VideoGameProject_AntxonMoço extends Application {
         //Evento del click, en caso de que falles
         
         scene.setOnMouseClicked(event -> {
-            stats.restarScore(30);
+            stats.restarScore();
             scoreLabel.setText("SCORE: " + stats.getScore());
             
             if (stats.getScore() < 0) {
@@ -191,10 +231,10 @@ public class VideoGameProject_AntxonMoço extends Application {
     
     //Metodo para generar el alien en una posicion aleatoria
     private void posicionAleatoriaAlien() {
-        double maxX = 600 - imagenAlien.getFitWidth();
-        double maxY = 500 - imagenAlien.getFitHeight();
-        double x = Math.random() * (maxX - 20) + 10;
-        double y = Math.random() * (maxY - 20) + 10;
+        double maxX = scene.getWidth();
+        double maxY = scene.getHeight();
+        double x = (Math.random() * (maxX - margenReaparicion));
+        double y = (Math.random() * (maxY - margenReaparicion));
         imagenAlien.setX(x);
         imagenAlien.setY(y);
     }
@@ -215,12 +255,16 @@ public class VideoGameProject_AntxonMoço extends Application {
     
     //Metodo para configurar el movimiento del nivel 2
     private void configurarMovimientoNivel2() {
-        double maxX = 600 - imagenAlien.getFitWidth();
-        double maxY = 500 - imagenAlien.getFitHeight();
-        double x = Math.random() * (maxX - 20) + 10;
-        double y = Math.random() * (maxY - 20) + 10;
+        if(movimientoAlien != null){
+            movimientoAlien.stop();
+        }
         
-        TranslateTransition movimientoAlien = new TranslateTransition(Duration.seconds(3), imagenAlien);
+        double maxX = scene.getWidth();
+        double maxY = scene.getHeight();
+        double x = (Math.random() * (maxX - margenReaparicion));
+        double y = (Math.random() * (maxY - margenReaparicion));
+        
+        movimientoAlien = new TranslateTransition(Duration.seconds(3), imagenAlien);
         movimientoAlien.setFromX(imagenAlien.getX());
         movimientoAlien.setFromY(imagenAlien.getY());
         movimientoAlien.setToX(x);
@@ -235,6 +279,76 @@ public class VideoGameProject_AntxonMoço extends Application {
         });
         
         movimientoAlien.play();
+    }
+    
+    //Funcion para configurar el movimiento del nivel 3, es mas rapido
+    private void configurarMovimientoNivel3(){
+        if(movimientoAlien != null){
+            movimientoAlien.stop();
+        }
+        
+        double maxX = scene.getWidth();
+        double maxY = scene.getHeight();
+        double x = (Math.random() * (maxX - margenReaparicion));
+        double y = (Math.random() * (maxY - margenReaparicion));
+        
+        movimientoAlien = new TranslateTransition(Duration.seconds(2), imagenAlien);
+        movimientoAlien.setFromX(imagenAlien.getX());
+        movimientoAlien.setFromY(imagenAlien.getY());
+        movimientoAlien.setToX(x);
+        movimientoAlien.setToY(y);
+        movimientoAlien.setCycleCount(1);
+        
+        
+        movimientoAlien.setOnFinished(e -> {
+            //Cuando acaba el movimiento, cambia de posicion y pierdes puntos
+            posicionAleatoriaAlien();
+            configurarMovimientoNivel2();
+        });
+        
+        movimientoAlien.play();
+    }
+    
+    private void mostrarPantallaVictoria(Stage primaryStage){
+        Group root = new Group();
+        Scene winScene = new Scene(root, 900, 800);
+        
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.5);
+        
+        ImageView backgroundWin = new ImageView(rutaImagenes.getBackground3());
+        backgroundWin.fitWidthProperty().bind(winScene.widthProperty());
+        backgroundWin.fitHeightProperty().bind(winScene.heightProperty());
+        backgroundWin.setEffect(colorAdjust);
+        backgroundWin.setPreserveRatio(false);
+        
+        
+        ImageView gifTrofeo = new ImageView(rutaImagenes.getTrofeo());
+        gifTrofeo.setFitWidth(225);
+        gifTrofeo.setFitHeight(250);
+        gifTrofeo.setX(330);
+        gifTrofeo.setY(170);
+        
+        ImageView gifConfetti = new ImageView(rutaImagenes.getConfetti());
+        gifConfetti.setFitWidth(900);
+        gifConfetti.setFitHeight(800);
+//        gifConfetti.setX(225);
+//        gifConfetti.setY(170);
+        
+        Label enhorabuenaLabel = new Label("!YOU WIN!");
+        
+        enhorabuenaLabel.setTranslateX(225);
+        enhorabuenaLabel.setTranslateY(500);
+        enhorabuenaLabel.setFont(Font.font(winFont.getFamily(), FontWeight.BOLD, 50));
+        enhorabuenaLabel.setStyle("-fx-text-fill: yellow;");
+        
+        root.getChildren().add(backgroundWin);
+        root.getChildren().add(gifTrofeo);
+        root.getChildren().add(enhorabuenaLabel);
+        root.getChildren().add(gifConfetti);
+        
+        primaryStage.setScene(winScene);
+        primaryStage.show();
     }
     
 }

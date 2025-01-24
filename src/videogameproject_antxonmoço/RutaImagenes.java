@@ -5,6 +5,8 @@
 package videogameproject_antxonmoço;
 
 import javafx.scene.image.Image;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -17,6 +19,8 @@ public class RutaImagenes {
     private String[] vidas = {"file:src\\Images\\corazonvida.png", "file:src\\Images\\corazonvidavacio.png"};
     private Image alien;
     private Image vida;
+    private Image trofeo = new Image("file:src\\Images\\trofeo.gif");
+    private Image confetti = new Image("file:src\\Images\\confetti.gif");
     
     public RutaImagenes(){
         int random = (int) (Math.random()*3+1);
@@ -48,6 +52,18 @@ public class RutaImagenes {
     public Image getVidaVacia(){
         return vida = new Image(vidas[2]);
     }
+
+    public Image getTrofeo() {
+        return trofeo;
+    }
+
+    public Image getConfetti() {
+        return confetti;
+    }
+    
+    
+    
+    
 
     
     

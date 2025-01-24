@@ -12,7 +12,7 @@ import javax.swing.ImageIcon;
  *
  * @author antxon
  */
-public class RutaImagenes {
+public class Imagenes {
     
     private String[] background = {"file:src\\Images\\background1.png", "file:src\\Images\\background2.png", "file:src\\Images\\background3.png"};
     private String[] aliens = {"file:src\\Images\\alien1.png", "file:src\\Images\\alien2.png", "file:src\\Images\\alien3.png", "file:src\\Images\\alien4.png"};
@@ -21,8 +21,9 @@ public class RutaImagenes {
     private Image vida;
     private Image trofeo = new Image("file:src\\Images\\trofeo.gif");
     private Image confetti = new Image("file:src\\Images\\confetti.gif");
+    private Image explosion = new Image("file:src\\Images\\explosion.gif");
     
-    public RutaImagenes(){
+    public Imagenes(){
         int random = (int) (Math.random()*3+1);
         this.alien = new Image(aliens[random]);
     }
@@ -60,6 +61,11 @@ public class RutaImagenes {
     public Image getConfetti() {
         return confetti;
     }
+
+    public Image getExplosion() {
+        return explosion;
+    }
+   
     
     
     

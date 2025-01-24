@@ -34,6 +34,14 @@ public class Stats {
     public int getLifes() {
         return lifes;
     }
+
+    public void setLifes(int lifes) {
+        this.lifes = lifes;
+    }
+    
+    public void reiniciarVidas(){
+        this.lifes = 0;
+    }
     
     
     public void perderVida(){

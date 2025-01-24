@@ -22,6 +22,7 @@ public class Imagenes {
     private Image trofeo = new Image("file:src\\Images\\trofeo.gif");
     private Image confetti = new Image("file:src\\Images\\confetti.gif");
     private Image explosion = new Image("file:src\\Images\\explosion.gif");
+    private Image lluvia = new Image("file:src\\Images\\lluvia.gif");
     
     public Imagenes(){
         int random = (int) (Math.random()*3+1);
@@ -65,9 +66,11 @@ public class Imagenes {
     public Image getExplosion() {
         return explosion;
     }
+
+    public Image getLluvia() {
+        return lluvia;
+    }
    
-    
-    
     
     
 

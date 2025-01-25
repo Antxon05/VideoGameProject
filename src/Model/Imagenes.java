@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package videogameproject_antxonmoço;
+package Model;
 
 import javafx.scene.image.Image;
 import javax.swing.Icon;
@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
  */
 public class Imagenes {
     
+    private Image backgroundPrincipal = new Image("file:src\\Images\\backgroundPantallaPrincipal.jpeg");
     private String[] background = {"file:src\\Images\\background1.png", "file:src\\Images\\background2.png", "file:src\\Images\\background3.png"};
     private String[] aliens = {"file:src\\Images\\alien1.png", "file:src\\Images\\alien2.png", "file:src\\Images\\alien3.png", "file:src\\Images\\alien4.png"};
     private String[] vidas = {"file:src\\Images\\corazonvida.png", "file:src\\Images\\corazonvidavacio.png"};
@@ -23,6 +24,7 @@ public class Imagenes {
     private Image confetti = new Image("file:src\\Images\\confetti.gif");
     private Image explosion = new Image("file:src\\Images\\explosion.gif");
     private Image lluvia = new Image("file:src\\Images\\lluvia.gif");
+    private Image boton = new Image("file:src\\Images\\fondoBoton.png");
     
     public Imagenes(){
         int random = (int) (Math.random()*3+1);
@@ -70,12 +72,14 @@ public class Imagenes {
     public Image getLluvia() {
         return lluvia;
     }
-   
-    
-    
 
-    
-    
+    public Image getBackgroundPrincipal() {
+        return backgroundPrincipal;
+    }
+
+    public Image getBoton() {
+        return boton;
+    }
     
     
     

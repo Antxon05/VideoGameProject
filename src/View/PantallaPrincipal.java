@@ -2,10 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMain.java to edit this template
  */
-package videogameproject_antxonmoço;
+package View;
 
+import Model.Imagenes;
+import Model.Sonidos;
+import Model.Stats;
 import java.awt.event.MouseEvent;
 import javafx.animation.FadeTransition;
+import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -34,7 +38,7 @@ import javax.swing.JLabel;
  *
  * @author antxon
  */
-public class VideoGameProject_AntxonMoço extends Application {
+public class PantallaPrincipal extends Application {
     
     
 
@@ -68,7 +72,8 @@ public class VideoGameProject_AntxonMoço extends Application {
     private MediaPlayer mediaFondo;
     private MediaPlayer mediaDisparo;
     private MediaPlayer mediaVictoria;
-    private MediaPlayer mediaDerrota;
+    private MediaPlayer mediaFail;
+
     
     
     @Override
@@ -132,12 +137,15 @@ public class VideoGameProject_AntxonMoço extends Application {
         
         //Configuración de los sonidos
         this.mediaFondo = sonidos.getSonidoFondo();
-        this.mediaFondo.setAutoPlay(true);
-        this.mediaFondo.setCycleCount(100);
+        this.mediaFondo.play();
+        this.mediaFondo.setCycleCount(Timeline.INDEFINITE);
         this.mediaFondo.setVolume(0.15);
         
         this.mediaDisparo = sonidos.getDisparo();
         this.mediaDisparo.setVolume(0.1);
+        
+        this.mediaFail = sonidos.getFail();
+        this.mediaFail.setVolume(0.6);
         
         this.mediaVictoria = sonidos.getSonidoVictoria();
         this.mediaVictoria.setVolume(0.15);
@@ -224,10 +232,13 @@ public class VideoGameProject_AntxonMoço extends Application {
             
             //Si llega  150 nos lleva a la pantalla de victoria
             if(stats.getScore() >= 150){
-                mostrarPantallaVictoria(primaryStage);
-                this.mediaFondo.stop();
-                this.mediaVictoria.play();
-                return;
+                PantallaWin pWin = new PantallaWin();
+                try{
+                    this.mediaFondo.stop();
+                    pWin.start(primaryStage);                    
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
             
             //Cuando se active los niveles 2 o 3 comenzaran los movimientos.
@@ -248,6 +259,8 @@ public class VideoGameProject_AntxonMoço extends Application {
         //Evento del click, en caso de que falles
         
         scene.setOnMouseClicked(event -> {
+            this.mediaFail.seek(Duration.ZERO);
+            this.mediaFail.play();
             stats.restarScore();
             scoreLabel.setText("SCORE: " + stats.getScore());
             
@@ -274,13 +287,6 @@ public class VideoGameProject_AntxonMoço extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
     
     
     //Metodo para generar el alien en una posicion aleatoria
@@ -302,15 +308,14 @@ public class VideoGameProject_AntxonMoço extends Application {
         vida3.setVisible(vidas >= 3);
         
         if(vidas == 0){
-            if(!gameOver){
+            PantallaGameOver pGameOver = new PantallaGameOver();
                 System.out.println("Game Over");
-                this.mediaDerrota = sonidos.getDerrota();
-                this.mediaDerrota.setVolume(0.15);
-                this.mediaFondo.stop();
-                this.mediaDerrota.play();
-                mostrarPantallaDerrota(primaryStage);
-                gameOver = true;
-            }
+                try{
+                  this.mediaFondo.stop();
+                  pGameOver.start(primaryStage);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
         }
     }
     
@@ -370,215 +375,5 @@ public class VideoGameProject_AntxonMoço extends Application {
         movimientoAlien.play();
     }
     
-    
-    //Mostrara la pantalla de victoria
-    private void mostrarPantallaVictoria(Stage primaryStage){
-        Group root = new Group();
-        Scene winScene = new Scene(root, 900, 800);
-        
-        ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setBrightness(-0.5);
-        
-        ImageView backgroundWin = new ImageView(rutaImagenes.getBackground3());
-        backgroundWin.fitWidthProperty().bind(winScene.widthProperty());
-        backgroundWin.fitHeightProperty().bind(winScene.heightProperty());
-        backgroundWin.setEffect(colorAdjust);
-        backgroundWin.setPreserveRatio(false);
-        
-        
-        ImageView gifTrofeo = new ImageView(rutaImagenes.getTrofeo());
-        gifTrofeo.setFitWidth(225);
-        gifTrofeo.setFitHeight(250);
-        gifTrofeo.setX(330);
-        gifTrofeo.setY(170);
-        
-        ImageView gifConfetti = new ImageView(rutaImagenes.getConfetti());
-        gifConfetti.setFitWidth(900);
-        gifConfetti.setFitHeight(800);
-//        gifConfetti.setX(225);
-//        gifConfetti.setY(170);
-        
-        Label enhorabuenaLabel = new Label("!YOU WIN!");
-        enhorabuenaLabel.setTranslateX(225);
-        enhorabuenaLabel.setTranslateY(500);
-        enhorabuenaLabel.setFont(Font.font(winFont.getFamily(), FontWeight.BOLD, 50));
-        enhorabuenaLabel.setStyle("-fx-text-fill: yellow;");
-        
-        FadeTransition fade = new FadeTransition();
-        fade.setDuration(Duration.millis(500));
-        fade.setFromValue(1.0);
-        fade.setToValue(0);
-        fade.setCycleCount(FadeTransition.INDEFINITE);
-        fade.setAutoReverse(true);
-        fade.setNode(enhorabuenaLabel);
-        fade.play();
-        
-        
-        root.getChildren().add(backgroundWin);
-        root.getChildren().add(gifTrofeo);
-        root.getChildren().add(enhorabuenaLabel);
-        root.getChildren().addAll(gifConfetti);
-        
-        primaryStage.setScene(winScene);
-        primaryStage.show();
-    }
-    
-    
-    //Mostrara la pantalla de derrota
-        private void mostrarPantallaDerrota(Stage primaryStage){
-        Group root = new Group();
-        Scene looseScene = new Scene(root, 900, 800);
-        
-        ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setBrightness(-0.5);
-        
-        ImageView backgroundWin = new ImageView(rutaImagenes.getBackground3());
-        backgroundWin.fitWidthProperty().bind(looseScene.widthProperty());
-        backgroundWin.fitHeightProperty().bind(looseScene.heightProperty());
-        backgroundWin.setEffect(colorAdjust);
-        backgroundWin.setPreserveRatio(false);
-        
-        
-        ImageView lluviaGif = new ImageView(rutaImagenes.getLluvia());
-        lluviaGif.setFitWidth(looseScene.getWidth());
-        lluviaGif.setFitHeight(looseScene.getHeight());
-        
-        
-        
-        Label l_game = new Label("GAME");
-        l_game.setTranslateX(200);
-        l_game.setTranslateY(200);
-        l_game.setFont(Font.font(winFont.getFamily(), FontWeight.BOLD, 80));
-        l_game.setStyle("-fx-text-fill: orange;");
-        
-        Label l_over = new Label("OVER");
-        l_over.setTranslateX(400);
-        l_over.setTranslateY(300);
-        l_over.setFont(Font.font(winFont.getFamily(), FontWeight.BOLD, 80));
-        l_over.setStyle("-fx-text-fill: orange;");
-        
-        Label l_playAgain =new Label("PLAY AGAIN");
-        l_playAgain.setTranslateX(330);
-        l_playAgain.setTranslateY(500);
-        l_playAgain.setFont(Font.font(winFont.getFamily(), FontWeight.BOLD, 25));
-        l_playAgain.setStyle("-fx-text-fill: white;");
-        
-        
-        Button b_yes = new Button("YES");
-        b_yes.setPrefWidth(100);
-        b_yes.setPrefHeight(40);
-        b_yes.setTranslateX(300);
-        b_yes.setTranslateY(550);
-        b_yes.setStyle("-fx-background-color: transparent; -fx-text-fill: #FFD700;");
-        b_yes.setFont(Font.font(winFont.getFamily(), FontWeight.BOLD, 30));
-        
-        Button b_no = new Button("NO");
-        b_no.setPrefWidth(100);
-        b_no.setPrefHeight(40);
-        b_no.setTranslateX(500);
-        b_no.setTranslateY(550);
-        b_no.setStyle("-fx-background-color: transparent; -fx-text-fill: #FF4500");
-        b_no.setFont(Font.font(winFont.getFamily(), FontWeight.BOLD, 30));
-        
-        //Animacion de parpadeo para los botones
-        FadeTransition fadeParpadeo = new FadeTransition(Duration.millis(300));
-        fadeParpadeo.setFromValue(1.0);
-        fadeParpadeo.setToValue(0.2);
-        fadeParpadeo.setCycleCount(FadeTransition.INDEFINITE);
-        fadeParpadeo.setAutoReverse(true);
-        
-        b_yes.setOnMouseEntered(event -> {
-        fadeParpadeo.setNode(b_yes);
-        fadeParpadeo.play();
-        });
-        
-        b_yes.setOnMouseExited(event -> {
-            fadeParpadeo.stop();
-            b_yes.setOpacity(1.0);
-        });
-        
-        b_no.setOnMouseEntered(event -> {
-            fadeParpadeo.setNode(b_no);
-            fadeParpadeo.play();
-        });
-        
-        b_no.setOnMouseExited(event -> {
-            fadeParpadeo.stop();
-            b_no.setOpacity(1.0);
-        });
-        
-        //Animación de parpadeo para el label de Game
-        FadeTransition fadeGame = new FadeTransition();
-        fadeGame.setDuration(Duration.millis(500));
-        fadeGame.setFromValue(1.0);
-        fadeGame.setToValue(0);
-        fadeGame.setCycleCount(FadeTransition.INDEFINITE);
-        fadeGame.setAutoReverse(true);
-        fadeGame.setNode(l_game);
-        fadeGame.play();
-        
-        //Animación de parpadeo para el label de Over
-        FadeTransition fadeOver = new FadeTransition();
-        fadeOver.setDuration(Duration.millis(500));
-        fadeOver.setFromValue(1.0);
-        fadeOver.setToValue(0);
-        fadeOver.setCycleCount(FadeTransition.INDEFINITE);
-        fadeOver.setAutoReverse(true);
-        fadeOver.setNode(l_over);
-        fadeOver.play();
-        
-        
-        //Configuración en caso de que le demos al no
-        
-        b_yes.setOnAction((event) -> {
-            try {
-                // Reiniciar todos los valores
-                stats.resetScore();
-                stats.reiniciarVidas();  // Asegúrate de tener un método resetLifes en Stats para restablecer las vidas
 
-                // Volver a mostrar los corazones
-                vida1.setVisible(true);
-                vida2.setVisible(true);
-                vida3.setVisible(true);
-
-                // Resetear el alien, puntuación, nivel, etc.
-                imagenAlien.setImage(rutaImagenes.getAlien());
-                imagenAlien.setFitWidth(200);
-                imagenAlien.setFitHeight(200);
-                posicionAleatoriaAlien();
-
-                // Resetear el fondo (por ejemplo, si cambió de fondo en el nivel 2 o 3)
-                imageFondo.setImage(rutaImagenes.getBackground1());
-
-                // Resetear la puntuación y el nivel
-                scoreLabel.setText("SCORE: " + stats.getScore());
-                nivelLabel.setText("LEVEL: " + stats.getLevel());
-
-                start(primaryStage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        
-        
-        b_no.setOnAction((event) -> {
-            Platform.exit();
-            System.exit(0);
-        });
-        
-        
-        
-        root.getChildren().add(backgroundWin);
-        root.getChildren().add(l_game);
-        root.getChildren().add(l_over);
-        root.getChildren().add(lluviaGif);
-        root.getChildren().add(l_playAgain);
-        root.getChildren().add(b_yes);
-        root.getChildren().add(b_no);
-        
-        primaryStage.setScene(looseScene);
-        primaryStage.show();
-    }
-       
-    
 }

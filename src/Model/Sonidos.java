@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package videogameproject_antxonmoço;
+package Model;
 
 import java.io.File;
 import javafx.scene.media.Media;
@@ -17,6 +17,7 @@ public class Sonidos {
     
     private Media derrota = new Media(new File("src/Sounds/derrota.mp3").toURI().toString());
     private Media disparo = new Media(new File("src/Sounds/disparo.mp3").toURI().toString());
+    private Media fail = new Media(new File("src/Sounds/fail.mp3").toURI().toString());
     private Media sonidoFondo = new Media(new File("src/Sounds/sonidofondo.mp3").toURI().toString());
     private Media sonidoVictoria = new Media(new File("src/Sounds/sonidovictoria.mp3").toURI().toString());
 
@@ -36,7 +37,9 @@ public class Sonidos {
     public MediaPlayer getSonidoVictoria() {
         return new MediaPlayer(sonidoVictoria);
     }
-    
-    
+
+    public MediaPlayer getFail() {
+        return new MediaPlayer(fail);
+    }
     
 }

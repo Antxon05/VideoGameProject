@@ -40,6 +40,7 @@ public class PantallaGameOver extends Application{
         Group root = new Group();
         Scene looseScene = new Scene(root, 900, 800);
         
+        //Configuración del background
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
         
@@ -49,15 +50,20 @@ public class PantallaGameOver extends Application{
         backgroundWin.setEffect(colorAdjust);
         backgroundWin.setPreserveRatio(false);
         
-        
+        //Ponemos el gif de lluvia con el mismo tamaño que el scene, como si fuese propio del background
         ImageView lluviaGif = new ImageView(rutaImagenes.getLluvia());
         lluviaGif.setFitWidth(looseScene.getWidth());
         lluviaGif.setFitHeight(looseScene.getHeight());
         
         //Configuración sonido
         this.mediaDerrota = sonidos.getDerrota();
+        this.mediaDerrota.setCycleCount(1);
         this.mediaDerrota.play();
+        this.mediaDerrota.setVolume(0.3);
         
+        
+        
+        //Todos los elementos definidos, labels, botones, etc...
         Label l_game = new Label("GAME");
         l_game.setTranslateX(200);
         l_game.setTranslateY(200);
@@ -162,7 +168,7 @@ public class PantallaGameOver extends Application{
         });
         
         
-        
+        //Añadimos los elementos usados al root
         root.getChildren().add(backgroundWin);
         root.getChildren().add(l_game);
         root.getChildren().add(l_over);

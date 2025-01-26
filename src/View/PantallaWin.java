@@ -40,6 +40,7 @@ public class PantallaWin extends Application{
         Group root = new Group();
         Scene winScene = new Scene(root, 900, 800);
         
+        //Configuración del background
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
         
@@ -49,7 +50,7 @@ public class PantallaWin extends Application{
         backgroundWin.setEffect(colorAdjust);
         backgroundWin.setPreserveRatio(false);
         
-        
+        //Añadimos algunos elementos del scene
         ImageView gifTrofeo = new ImageView(rutaImagenes.getTrofeo());
         gifTrofeo.setFitWidth(225);
         gifTrofeo.setFitHeight(220);
@@ -59,13 +60,14 @@ public class PantallaWin extends Application{
         ImageView gifConfetti = new ImageView(rutaImagenes.getConfetti());
         gifConfetti.setFitWidth(900);
         gifConfetti.setFitHeight(800);
-//        gifConfetti.setX(225);
-//        gifConfetti.setY(170);
 
 
+        //Configuración del sonido
         this.mediaWin = sonidos.getSonidoVictoria();
         this.mediaWin.play();
+        this.mediaWin.setVolume(0.4);
         
+        //Elementos como labels, botones, etc...
         Label enhorabuenaLabel = new Label("YOU WIN!");
         enhorabuenaLabel.setTranslateX(250);
         enhorabuenaLabel.setTranslateY(360);

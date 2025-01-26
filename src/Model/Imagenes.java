@@ -25,6 +25,7 @@ public class Imagenes {
     private Image explosion = new Image("file:src\\Images\\explosion.gif");
     private Image lluvia = new Image("file:src\\Images\\lluvia.gif");
     private Image boton = new Image("file:src\\Images\\fondoBoton.png");
+    private Image fondoInfo = new Image("file:src\\Images\\howtoplay.png");
     
     public Imagenes(){
         int random = (int) (Math.random()*3+1);
@@ -79,6 +80,10 @@ public class Imagenes {
 
     public Image getBoton() {
         return boton;
+    }
+
+    public Image getFondoInfo() {
+        return fondoInfo;
     }
     
     

@@ -82,7 +82,6 @@ public class PantallaPrincipal extends Application {
         scene = new Scene(root, 900, 800);
         
 
-        
         //Configuración del fondo de pantalla, se va adaptando segun agrandemos el scene
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.3);
@@ -93,7 +92,7 @@ public class PantallaPrincipal extends Application {
         imageFondo.setEffect(colorAdjust);
         imageFondo.setPreserveRatio(false);
         
-        //Configuración de la vida inicial, puntuación y niveles
+        //Configuración de la vida inicial
         
         vida1 = new ImageView(rutaImagenes.getVidaLlena());
         vida2 = new ImageView(rutaImagenes.getVidaLlena());
@@ -139,7 +138,7 @@ public class PantallaPrincipal extends Application {
         this.mediaFondo = sonidos.getSonidoFondo();
         this.mediaFondo.play();
         this.mediaFondo.setCycleCount(Timeline.INDEFINITE);
-        this.mediaFondo.setVolume(0.15);
+        this.mediaFondo.setVolume(0.10);
         
         this.mediaDisparo = sonidos.getDisparo();
         this.mediaDisparo.setVolume(0.1);
@@ -150,8 +149,7 @@ public class PantallaPrincipal extends Application {
         this.mediaVictoria = sonidos.getSonidoVictoria();
         this.mediaVictoria.setVolume(0.15);
         
-        //Animación del contador de 3 segundos
-        
+        //Configuración del contador de 3 segundos, para que desaparezca el alien
         javafx.animation.Timeline timeline = new javafx.animation.Timeline(
             new javafx.animation.KeyFrame(
                 Duration.seconds(3), //El alien se muestra durante 3 segundos
@@ -177,7 +175,6 @@ public class PantallaPrincipal extends Application {
         timeline.play();
         
         //Evento del click cuando impacta al alien
-        
         imagenAlien.setOnMouseClicked(event -> {
             stats.incrementarAciertos();
             stats.setScore();
@@ -187,7 +184,7 @@ public class PantallaPrincipal extends Application {
             imagenAlien.setUserData("clicked");
             
             
-            //Coge las coordenadas absolutas del alien
+            //Coge las coordenadas absolutas del alien para generar la explosion en ese mismo punto
             javafx.geometry.Point2D alienPosition = imagenAlien.localToScene(imagenAlien.getX(), imagenAlien.getY());
             
             this.explosion.setFitWidth(50);
@@ -201,7 +198,6 @@ public class PantallaPrincipal extends Application {
             ((Group)scene.getRoot()).getChildren().add(explosion);
         
         //Configuración del tiempo de explosion
-        
             javafx.animation.Timeline removeExplosion = new javafx.animation.Timeline(
             new javafx.animation.KeyFrame(Duration.millis(500), e -> ((Group) scene.getRoot()).getChildren().remove(explosion))
             );
@@ -256,8 +252,7 @@ public class PantallaPrincipal extends Application {
             imagenAlien.setImage(rutaImagenes.getAlien());
         });
         
-        //Evento del click, en caso de que falles
-        
+        //Evento del click al scene, en caso de que falles
         scene.setOnMouseClicked(event -> {
             this.mediaFail.seek(Duration.ZERO);
             this.mediaFail.play();
@@ -268,9 +263,11 @@ public class PantallaPrincipal extends Application {
                 stats.perderVida();
                 stats.resetScore();
                 scoreLabel.setText("SCORE: " + stats.getScore());
+                //Llama al metodo cuando tiene menos de 0 de score
                 actualizarVidas(vida1, vida2, vida3, primaryStage);
             }
             
+            //Actualiza la imagen del alien
             imagenAlien.setImage(rutaImagenes.getAlien());
         });
         
@@ -288,6 +285,8 @@ public class PantallaPrincipal extends Application {
         primaryStage.show();
     }
     
+    //DEFINICIÓN DE LOS METODOS USADOS:
+    
     
     //Metodo para generar el alien en una posicion aleatoria
     private void posicionAleatoriaAlien() {
@@ -299,7 +298,7 @@ public class PantallaPrincipal extends Application {
         imagenAlien.setY(y);
     }
     
-    
+    //Metodo para verificar las vidas que tiene, en caso de que tenga 0 ha perdido
     private void actualizarVidas(ImageView vida1, ImageView vida2, ImageView vida3, Stage primaryStage){
         int vidas = stats.getLifes();
         

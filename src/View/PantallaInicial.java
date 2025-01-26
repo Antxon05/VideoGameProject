@@ -35,17 +35,15 @@ public class PantallaInicial extends Application{
     private Sonidos sounds = new Sonidos();
     
     private Font inicioFont = Font.loadFont(("file:src\\Images\\Orbitron-ExtraBold.ttf"),20);
-    private ImageView fondoBoton;
     
     private MediaPlayer s_fondo;
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        
-        
         Group root = new Group();
         Scene startScene = new Scene(root, 900, 800);
         
+        //Configuración del background
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.5);
         
@@ -55,19 +53,19 @@ public class PantallaInicial extends Application{
         backgroundStart.setEffect(colorAdjust);
         backgroundStart.setPreserveRatio(false);
         
+        //Configuración del sonido de fondo
         this.s_fondo = sounds.getSonidoFondo();
         this.s_fondo.play();
-        this.s_fondo.setVolume(0.15);
+        this.s_fondo.setVolume(0.10);
         
+        
+        //Configruación de los elementos usados, text, buttons, etc...
         Text l_title = new Text("ALIEN SHOOTER");
         l_title.setFont(Font.font(inicioFont.getFamily(),FontWeight.BOLD,FontPosture.REGULAR,60));
         l_title.setFill(Color.WHITE);
         l_title.setX(170);
         l_title.setY(200);
         
-        this.fondoBoton = new ImageView(rutaImagenes.getBoton());
-        this.fondoBoton.setFitWidth(100);
-        this.fondoBoton.setFitHeight(100);
         
         Button b_start = new Button("START GAME");
         b_start.setFont(Font.font(inicioFont.getFamily(), FontWeight.BOLD, FontPosture.REGULAR, 20));
@@ -93,6 +91,7 @@ public class PantallaInicial extends Application{
         b_info.setPrefWidth(250);
         b_info.setPrefHeight(50);
 
+        //Animación para el parpadeo de los botones
         FadeTransition fadeParpadeo = new FadeTransition(Duration.millis(300));
         fadeParpadeo.setFromValue(1.0);
         fadeParpadeo.setToValue(0.5);
@@ -132,6 +131,7 @@ public class PantallaInicial extends Application{
         });
         
         
+        //Evento para cuando le demos al boton de start
         b_start.setOnAction((event) -> {
         
             PantallaPrincipal pPrincipal = new PantallaPrincipal();
@@ -144,11 +144,13 @@ public class PantallaInicial extends Application{
             }
         });
         
+        //Evento para cuando le demos al boton de exit
         b_exit.setOnAction((event) -> {
             Platform.exit();
             System.exit(0);
         });
         
+        //Evento para cuando le demos al boton de how to play
         b_info.setOnAction((event) -> {
             PantallaInfo pInfo = new PantallaInfo();
             
@@ -162,6 +164,7 @@ public class PantallaInicial extends Application{
         });
         
         
+        //Agregamos los elementos al root
         root.getChildren().add(backgroundStart);
         root.getChildren().add(l_title);
         root.getChildren().add(b_start);
